@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:note_app/Screens/notes_screen.dart';
 
 import '../BloCs/note_bloc/note_bloc.dart';
 import '../Models/note_model.dart';
@@ -54,9 +55,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   TextFormField(
                     controller: _contentController,
                     decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(4),
                       labelText: 'Content',
                     ),
-                    maxLines: 4,
+                    minLines: 1,
+                    maxLines: 5,
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter content';
@@ -76,7 +79,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                           content: content,
                         );
                         context.read<NoteBloc>().add(AddNote(note: note));
-                        Navigator.pop(context);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NotesScreen()),
+                            (Route<dynamic> route) => false);
                       }
                     },
                     child: Text('Save'),

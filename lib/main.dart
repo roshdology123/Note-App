@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,8 @@ import 'Screens/notes_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  final database = FirebaseFirestore.instance;
+  database.settings = const Settings(persistenceEnabled: false);
   runApp(
     BlocProvider(
       create: (context) => NoteBloc(noteRepository: NoteRepository()),
@@ -26,7 +29,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: NotesScreen(),
+      home: RepositoryProvider(
+        create: (context) => NoteRepository(),
+        child: BlocProvider(
+          create: (context) =>
+              NoteBloc(noteRepository: NoteRepository())..add(LoadNotes()),
+          child: NotesScreen(),
+        ),
+      ),
     );
   }
 }
